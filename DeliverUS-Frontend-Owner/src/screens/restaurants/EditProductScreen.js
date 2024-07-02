@@ -20,8 +20,10 @@ export default function EditProductScreen ({ navigation, route }) {
   const [productCategories, setProductCategories] = useState([])
   const [backendErrors, setBackendErrors] = useState()
   const [product, setProduct] = useState({})
-
-  const [initialProductValues, setInitialProductValues] = useState({ name: null, description: null, price: null, order: null, productCategoryId: null, availability: null, image: null })
+  // BEGIN SOLUTION
+  // Added initial value for promote property
+  const [initialProductValues, setInitialProductValues] = useState({ name: null, description: null, price: null, order: null, productCategoryId: null, availability: null, image: null, promoted: false })
+  // END SOLUTION
   const validationSchema = yup.object().shape({
     name: yup
       .string()
@@ -158,7 +160,7 @@ export default function EditProductScreen ({ navigation, route }) {
                 style={{ backgroundColor: GlobalStyles.brandBackground }}
                 dropDownStyle={{ backgroundColor: '#fafafa' }}
               />
-              <ErrorMessage name={'productCategoryId'} render={msg => <TextError>{msg}</TextError> }/>
+              <ErrorMessage name={'productCategoryId'} render={msg => <TextError>{msg}</TextError>} />
 
               <TextRegular>Is it available?</TextRegular>
               <Switch
@@ -171,7 +173,7 @@ export default function EditProductScreen ({ navigation, route }) {
                   setFieldValue('availability', value)
                 }
               />
-              <ErrorMessage name={'availability'} render={msg => <TextError>{msg}</TextError> }/>
+              <ErrorMessage name={'availability'} render={msg => <TextError>{msg}</TextError>} />
 
               <Pressable onPress={() =>
                 pickImage(
@@ -191,7 +193,7 @@ export default function EditProductScreen ({ navigation, route }) {
               }
 
               <Pressable
-                onPress={ handleSubmit }
+                onPress={handleSubmit}
                 style={({ pressed }) => [
                   {
                     backgroundColor: pressed
@@ -201,7 +203,7 @@ export default function EditProductScreen ({ navigation, route }) {
                   styles.button
                 ]}>
                 <View style={[{ flex: 1, flexDirection: 'row', justifyContent: 'center' }]}>
-                  <MaterialCommunityIcons name='content-save' color={'white'} size={20}/>
+                  <MaterialCommunityIcons name='content-save' color={'white'} size={20} />
                   <TextRegular textStyle={styles.text}>
                     Save
                   </TextRegular>

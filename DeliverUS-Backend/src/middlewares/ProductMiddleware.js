@@ -37,4 +37,19 @@ const checkProductHasNotBeenOrdered = async (req, res, next) => {
   }
 }
 
-export { checkProductOwnership, checkProductRestaurantOwnership, checkProductHasNotBeenOrdered }
+// Solution
+
+const checkRestaurantDiscount = async (req, res, next) => {
+  try {
+    const product = await Product.findByPk(req.params.productId, { include: { model: Restaurant, as: 'restaurant' } })
+    if (product.restaurant.discountPercentage > 0) {
+      return next()
+    } else {
+      return res.status(403).send('Not enough discount. This restaurant is not promoted')
+    }
+  } catch (err) {
+    return res.status(500).send(err)
+  }
+}
+
+export { checkProductOwnership, checkProductRestaurantOwnership, checkProductHasNotBeenOrdered, checkRestaurantDiscount }

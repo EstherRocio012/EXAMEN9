@@ -23,7 +23,7 @@ const indexOwner = async function (req, res) {
   try {
     const restaurants = await Restaurant.findAll(
       {
-        attributes: { exclude: ['userId'] },
+        attributes: ['id', 'name', 'description', 'address', 'postalCode', 'url', 'shippingCosts', 'averageServiceMinutes', 'email', 'phone', 'logo', 'heroImage', 'status', 'restaurantCategoryId', /* BEGIN SOLUTION */ 'discountPercentage'],
         where: { userId: req.user.id },
         include: [{
           model: RestaurantCategory,
@@ -39,6 +39,12 @@ const indexOwner = async function (req, res) {
 const create = async function (req, res) {
   const newRestaurant = Restaurant.build(req.body)
   newRestaurant.userId = req.user.id // usuario actualmente autenticado
+  if (typeof req.files?.heroImage !== 'undefined') {
+    newRestaurant.heroImage = req.files.heroImage[0].destination + '/' + req.files.heroImage[0].filename
+  }
+  if (typeof req.files?.logo !== 'undefined') {
+    newRestaurant.logo = req.files.logo[0].destination + '/' + req.files.logo[0].filename
+  }
   try {
     const restaurant = await newRestaurant.save()
     res.json(restaurant)
@@ -71,6 +77,12 @@ const show = async function (req, res) {
 }
 
 const update = async function (req, res) {
+  if (typeof req.files?.heroImage !== 'undefined') {
+    req.body.heroImage = req.files.heroImage[0].destination + '/' + req.files.heroImage[0].filename
+  }
+  if (typeof req.files?.logo !== 'undefined') {
+    req.body.logo = req.files.logo[0].destination + '/' + req.files.logo[0].filename
+  }
   try {
     await Restaurant.update(req.body, { where: { id: req.params.restaurantId } })
     const updatedRestaurant = await Restaurant.findByPk(req.params.restaurantId)

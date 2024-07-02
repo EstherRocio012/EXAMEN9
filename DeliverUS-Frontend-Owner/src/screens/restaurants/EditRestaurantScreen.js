@@ -21,8 +21,10 @@ export default function EditRestaurantScreen ({ navigation, route }) {
   const [restaurantCategories, setRestaurantCategories] = useState([])
   const [backendErrors, setBackendErrors] = useState()
   const [restaurant, setRestaurant] = useState({})
-
-  const [initialRestaurantValues, setInitialRestaurantValues] = useState({ name: null, description: null, address: null, postalCode: null, url: null, shippingCosts: null, email: null, phone: null, restaurantCategoryId: null, logo: null, heroImage: null })
+  // BEGIN SOLUTION
+  // Added initial value for discountPercentage property
+  const [initialRestaurantValues, setInitialRestaurantValues] = useState({ name: null, description: null, address: null, postalCode: null, url: null, shippingCosts: null, email: null, phone: null, restaurantCategoryId: null, logo: null, heroImage: null, discountPercentage: 0 })
+  // END SOLUTION
   const validationSchema = yup.object().shape({
     name: yup
       .string()
@@ -56,7 +58,13 @@ export default function EditRestaurantScreen ({ navigation, route }) {
       .number()
       .positive()
       .integer()
-      .required('Restaurant category is required')
+      .required('Restaurant category is required'),
+    // BEGIN SOLUTION
+    discountPercentage: yup
+      .number()
+      .max(100, 'Discount percentage must be a float between 0 and 100')
+      .min(0, 'Discount percentage must be a float between 0 and 100')
+    // END SOLUTION
   })
 
   useEffect(() => {
@@ -187,12 +195,22 @@ export default function EditRestaurantScreen ({ navigation, route }) {
                 label='Phone:'
               />
 
+              {/* BEGIN SOLUTION
+                  Shows the components necessary to adjust the discount percentage and discount code properties.
+              */}
+
+              <InputItem
+                name='discountPercentage'
+                label='Discount percentage:'
+              />
+              {/* END SOLUTION */}
+
               <DropDownPicker
                 open={open}
                 value={values.restaurantCategoryId}
                 items={restaurantCategories}
                 setOpen={setOpen}
-                onSelectItem={ item => {
+                onSelectItem={item => {
                   setFieldValue('restaurantCategoryId', item.value)
                 }}
                 setItems={setRestaurantCategories}
@@ -201,7 +219,7 @@ export default function EditRestaurantScreen ({ navigation, route }) {
                 style={{ backgroundColor: GlobalStyles.brandBackground }}
                 dropDownStyle={{ backgroundColor: '#fafafa' }}
               />
-              <ErrorMessage name={'restaurantCategoryId'} render={msg => <TextError>{msg}</TextError> }/>
+              <ErrorMessage name={'restaurantCategoryId'} render={msg => <TextError>{msg}</TextError>} />
 
               <Pressable onPress={() =>
                 pickImage(
@@ -244,7 +262,7 @@ export default function EditRestaurantScreen ({ navigation, route }) {
                   styles.button
                 ]}>
                 <View style={[{ flex: 1, flexDirection: 'row', justifyContent: 'center' }]}>
-                  <MaterialCommunityIcons name='content-save' color={'white'} size={20}/>
+                  <MaterialCommunityIcons name='content-save' color={'white'} size={20} />
                   <TextRegular textStyle={styles.text}>
                     Save
                   </TextRegular>
